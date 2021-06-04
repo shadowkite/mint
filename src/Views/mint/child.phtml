@@ -1,8 +1,8 @@
-<?php if(!count($this->slp->getParentTokens())) { ?>
-    <div class="row">
-        You have no collections yet. <a href="/mint/parent">Make a collection first.</a>
+<?php if($this->error) { ?>
+    <div class="row alert alert-danger">
+        <?php echo $this->error; ?>
     </div>
-<?php } else { ?>
+<?php } ?>
     <form method="POST">
         <div class="mb-3">
             <label class="form-label">Collection</label>
@@ -14,6 +14,13 @@
                 <?php } ?>
             </select>
         </div>
+        <?php if(!count($this->slp->getParentTokens())) { ?>
+            <div class="mb-3">
+                <div class="alert alert-primary">
+                    You have no collections yet. <a href="/mint/parent">Make a collection first.</a>
+                </div>
+            </div>
+        <?php } ?>
         <div class="mb-3">
             <label class="form-label">Name</label>
             <input required class="form-control" type="text" name="name" value="Test #<?php echo uniqid(); ?>" />
@@ -41,4 +48,3 @@
         </div>
         <input class="btn btn-primary" type="submit" value="Create NFT" name="submit" />
     </form>
-<?php } ?>

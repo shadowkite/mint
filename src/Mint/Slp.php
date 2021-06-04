@@ -18,13 +18,11 @@ class Slp {
 
         $json = str_replace("\"", "\\\"", json_encode($info));
         $command = "curl -s -X POST http://127.0.0.1:".$port."/" . $url . " -H \"Content-Type: application/json\" -d \"" . $json ."\"";
-
         exec($command, $output);
+
         $result = json_decode($output[0]);
         if(isset($result->message)) {
-            var_dump($result);
-            die();
-            //throw new \Exception('Wallet communication error: ' . $result->message);
+            throw new \Exception('Wallet communication error: ' . $result->message);
         }
         return $result;
     }
@@ -50,6 +48,9 @@ class Slp {
     }
 
     public function getWalletId() {
+        if(!isset($_SESSION[$this->cookieName])) {
+            return null;
+        }
         return $_SESSION[$this->cookieName];
     }
 

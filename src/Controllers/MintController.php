@@ -1,6 +1,7 @@
 <?php
 
 use Mint\Slp;
+use Mint\Sanitizer;
 
 class MintController extends \Controller {
     private $slp;
@@ -9,9 +10,12 @@ class MintController extends \Controller {
     }
     public function indexAction() {
         if(isset($_POST['submit'])) {
-            $this->slp->setWalletId('seed:' . $_POST['network'] . ":" . $_POST['seed'] . ":" . $_POST['derivationPath']);
+            $seedParts = ['seed'];
+            $seedParts[] = Sanitizer::network($_POST['network']);
+            $seedParts[] = Sanitizer::seed($_POST['seed']);
+            $seedParts[] = Sanitizer::derivationPath($_POST['derivationPath']);
+            $this->slp->setWalletId(implode(':', $seedParts));
         }
-        $this->getResource('layout')->setScriptName('mint.phtml');
         $this->view->slp = $this->slp;
     }
 
@@ -20,7 +24,6 @@ class MintController extends \Controller {
             $this->redirect('/mint/index');
             return;
         }
-        $this->getResource('layout')->setScriptName('mint.phtml');
         $this->view->slp = $this->slp;
         $this->view->tokens = $this->slp->getParentTokens();
     }
@@ -30,7 +33,6 @@ class MintController extends \Controller {
             $this->redirect('/mint/index');
             return;
         }
-        $this->getResource('layout')->setScriptName('mint.phtml');
         $this->slp->forgetWallet();
         $this->redirect('/mint/index');
     }
@@ -40,21 +42,24 @@ class MintController extends \Controller {
             $this->redirect('/mint/index');
             return;
         }
-        $this->getResource('layout')->setScriptName('mint.phtml');
         $this->view->slp = $this->slp;
 
         $this->view->collection = null;
         if(isset($_GET['collection'])) {
-            $this->view->collection = $_GET['collection']; // @TODO safe check
+            $this->view->collection = Sanitizer::hex($_GET['collection']);
         }
         if(isset($_POST['submit'])) {
-            $this->slp->mintChild(
-                $_POST['parent'],
-                $_POST['name'],
-                $_POST['ticker'],
-                $_POST['docUrl'],
-                $_POST['docHash'],
-                $_POST['receiver']);
+            try {
+                $this->slp->mintChild(
+                    Sanitizer::hex($_POST['parent']),
+                    Sanitizer::tokenName($_POST['name']),
+                    Sanitizer::tokenName($_POST['ticker']),
+                    Sanitizer::url($_POST['docUrl']),
+                    Sanitizer::hex($_POST['docHash']),
+                    Sanitizer::address($_POST['receiver']));
+            } catch(\Exception $e) {
+                $this->view->error = $e->getMessage();
+            }
         }
     }
 
@@ -63,17 +68,16 @@ class MintController extends \Controller {
             $this->redirect('/mint/index');
             return;
         }
-        $this->getResource('layout')->setScriptName('mint.phtml');
-        try {
-            if(isset($_POST['submit'])) {
+        if(isset($_POST['submit'])) {
+            try {
                 $this->slp->mintParent(
-                    $_POST['name'],
-                    $_POST['ticker'],
-                    $_POST['docUrl'],
-                    $_POST['docHash']);
+                    Sanitizer::tokenName($_POST['name']),
+                    Sanitizer::tokenName($_POST['ticker']),
+                    Sanitizer::url($_POST['docUrl']),
+                    Sanitizer::hex($_POST['docHash']));
+            } catch(\Exception $e) {
+                $this->view->error = $e->getMessage();
             }
-        } catch(\Exception $e) {
-            var_dump($e);
         }
     }
 }
