@@ -117,7 +117,7 @@ class Slp {
         echo "</pre>";
     }
 
-    public function mintChild($parentToken, $name, $ticker, $docUrl, $docHash) {
+    public function mintChild($parentToken, $name, $ticker, $docUrl, $docHash, $tokenReceiver) {
         $result = $this->send('wallet/slp/nft_child_genesis', [
             'walletId' => $this->getWalletId(),
             'name' => $name,
@@ -128,7 +128,7 @@ class Slp {
             'documentHash' => $docHash,
             'endBaton' => false,
             'parentTokenId' => $parentToken,
-            'tokenReceiverSlpAddr' => $this->getAddr(true),
+            'tokenReceiverSlpAddr' => $tokenReceiver,
             'batonReceiverSlpAddr' => $this->getAddr(true),
         ]);
         echo "<pre>";

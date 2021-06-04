@@ -34,6 +34,11 @@
             <input class="form-control" type="text" name="docHash" />
             <div class="form-text">Recommended: Enter the sha256sum of the linked file, or leave empty.</div>
         </div>
+        <div class="mb-3">
+            <label class="form-label">Token receiver address</label>
+            <input class="form-control" type="text" name="receiver" value="<?php echo $this->slp->getAddr(true); ?>" />
+            <div class="form-text">Recommended: Enter an address where you can manage the NFT easily, like <a href="https://juungle.net/">Juungle</a>-address or <a href="https://zapit.io">Zapit</a>-address".</div>
+        </div>
         <input class="btn btn-primary" type="submit" value="Create NFT" name="submit" />
     </form>
 <?php } ?>

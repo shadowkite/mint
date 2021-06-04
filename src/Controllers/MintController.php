@@ -53,7 +53,8 @@ class MintController extends \Controller {
                 $_POST['name'],
                 $_POST['ticker'],
                 $_POST['docUrl'],
-                $_POST['docHash']);
+                $_POST['docHash'],
+                $_POST['receiver']);
         }
     }
 
