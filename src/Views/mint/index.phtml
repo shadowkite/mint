@@ -1,0 +1,57 @@
+<?php if($this->slp->getWalletId()) { ?>
+    <div class="row">
+        <div class="col-md-4">
+            <img src='<?php echo $this->slp->getAddrQR(); ?>' />
+        </div>
+        <div class="col-md-8">
+            <form>
+                <div class="mb-3">
+                    <label class="form-label">Funds</label>
+                    <input type="text" class="form-control" value="<?php echo sprintf("%.8f", $this->slp->getBalance()); ?>"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Bitcoin Cash address</label>
+                    <input type="text" class="form-control" value="<?php echo $this->slp->getAddr(); ?>" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Simpleledger address</label>
+                    <input type="text" class="form-control" value="<?php echo $this->slp->getAddr(true); ?>" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Testnet faucet</label>
+                </div>
+                <div class="mb-3">
+                    <a href='https://rest-unstable.mainnet.cash/faucet.html' target='_blank'>https://rest-unstable.mainnet.cash/faucet.html</a>
+                </div>
+                <div class="mb-3">
+                    <span><?php echo $this->slp->getWalletId(); ?></span><br/>
+                    <a href="/mint/forget">Forget wallet</a><br/>
+                </div>
+            </form>
+        </div>
+    </div>
+<?php } else { ?>
+    <?php $wallet = $this->slp->generateWallet(); ?>
+    <div class="row">
+        <div class="col">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Network</label>
+                    <select class="form-select" name="network">
+                        <option value="testnet"<?php echo $wallet->network == 'testnet'?' selected':''; ?>>Testnet</option>
+                        <option value="mainnet"<?php echo $wallet->network == 'mainnet'?' selected':''; ?>>Mainnet</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Wallet seedphrase</label>
+                    <input type="text" class="form-control" name="seed" value="<?php echo $wallet->seed; ?>"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Derivation path</label>
+                    <input type="text" class="form-control" name="derivationPath" value="<?php echo $wallet->derivationPath; ?>" />
+                </div>
+                <input type="submit" name="submit" value="Save & generate addresses" class="btn btn-primary" />
+            </form>
+        </div>
+    </div>
+<?php } ?>

@@ -1,0 +1,72 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "5bc049f864701a3e4d1cc97d65c51667",
+    "packages": [
+        {
+            "name": "wdalmut/simple-mvc",
+            "version": "0.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wdalmut/simple-mvc.git",
+                "reference": "0657d1f53cfbb44c43f97f1260a0fd5d6a557295"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wdalmut/simple-mvc/zipball/0657d1f53cfbb44c43f97f1260a0fd5d6a557295",
+                "reference": "0657d1f53cfbb44c43f97f1260a0fd5d6a557295",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/",
+                    "exts/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Walter Dal Mut",
+                    "email": "walter.dalmut@gmail.com",
+                    "homepage": "http://walterdalmut.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple and full stack Push & Pull MVC framework.",
+            "keywords": [
+                "framework",
+                "micro",
+                "microframework",
+                "mvc"
+            ],
+            "support": {
+                "email": "walter.dalmut@gmail.com",
+                "issues": "https://github.com/wdalmut/simple-mvc/issues",
+                "source": "https://github.com/wdalmut/simple-mvc/tree/master"
+            },
+            "time": "2013-04-23T13:59:46+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.4"
+    },
+    "plugin-api-version": "2.0.0"
+}

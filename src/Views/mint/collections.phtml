@@ -1,0 +1,38 @@
+<?php foreach($this->tokens as $token) { ?>
+    <div class="row">
+        <div class="col-md-12">
+            <h1><?php echo $token->name; ?> [$<?php echo $token->ticker; ?>]</h1>
+            <?php $info = $this->slp->getTokenInfo($token->tokenId); ?>
+            <div>
+                Document URL: <?php echo $info->documentUrl; ?><br/>
+                Document hash: <?php echo $info->documentHash; ?><br/>
+                <br/>
+            </div>
+            <div>
+                <a href="/mint/child?collection=<?php echo $token->tokenId; ?>">Mint NFT in this collection</a>
+            </div>
+        </div>
+        <?php if(!$this->slp->getChildTokens($token->tokenId)) { ?>
+            <div class="col-md-12 error">No NFTs found</div>
+        <?php } ?>
+    </div>
+    <?php foreach($this->slp->getChildTokens($token->tokenId) as $child) { ?>
+        <div class="row">
+            <div class="col-md-2">
+                <img src="http://lorempixel.com/150/150/sports/<?php echo $child->tokenId; ?>" />
+            </div>
+            <div class="col-md-10">
+                <?php $info = $this->slp->getTokenInfo($child->tokenId); ?>
+                <div>
+                    <h2><?php echo $info->name; ?> [$<?php echo $info->ticker; ?>]</h2>
+                    Document URL: <?php echo $info->documentUrl; ?><br/>
+                    Document hash: <?php echo $info->documentHash; ?><br/>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+    <div class="row">
+        <div class="col-md-12">&nbsp;</div>
+    </div>
+<?php } ?>
+

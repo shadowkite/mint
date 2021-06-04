@@ -1,0 +1,15 @@
+{
+    "license": "MIT",
+    "name": "shadowkite/mint",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "require": {
+        "wdalmut/simple-mvc": "^0.1.6"
+    },
+    "autoload": {
+        "psr-4": {"Mint\\": "src/Mint"}
+    }
+}

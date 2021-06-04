@@ -1,0 +1,23 @@
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input class="form-control" type="text" name="name" required value="Test #<?php echo uniqid(); ?>" />
+        <div class="form-text">This will be the name of your collection, for example: Foo's art. </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ticker</label>
+        <input class="form-control" type="text" required name="ticker" />
+        <div class="form-text">Enter the ticker for your collection, for example: FOO. </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Document URL</label>
+        <input class="form-control" type="text" required name="docUrl" />
+        <div class="form-text">Recommended: Enter the URL to your website or social media account.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Document hash</label>
+        <input class="form-control" type="text" name="docHash" />
+        <div class="form-text">Recommended: leave empty, or when a file is attached, enter the sha256sum here.</div>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Create collection" name="submit" />
+</form>
