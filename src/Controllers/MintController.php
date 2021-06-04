@@ -3,9 +3,6 @@
 use Mint\Slp;
 
 class MintController extends \Controller {
-
-    //{\"walletId\":\"seed:testnet:sword human edit shiver egg space limit filter grow include mass key:m\/44'\/245'\/0'\/0\/0\"}
-
     private $slp;
     public function __construct() {
         $this->slp = new Slp();
