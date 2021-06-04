@@ -71,7 +71,6 @@ class MintController extends \Controller {
                     $_POST['docUrl'],
                     $_POST['docHash']);
             }
-
         } catch(\Exception $e) {
             var_dump($e);
         }
