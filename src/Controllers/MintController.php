@@ -4,21 +4,38 @@ use Mint\Slp;
 use Mint\Sanitizer;
 
 class MintController extends \Controller {
+
+    /**
+     * @var Slp
+     */
     private $slp;
+
+    /**
+     * MintController constructor.
+     */
     public function __construct() {
         $this->slp = new Slp();
     }
+
+    /**
+     * Index action
+     */
     public function indexAction() {
         if(isset($_POST['submit'])) {
-            $seedParts = ['seed'];
-            $seedParts[] = Sanitizer::network($_POST['network']);
-            $seedParts[] = Sanitizer::seed($_POST['seed']);
-            $seedParts[] = Sanitizer::derivationPath($_POST['derivationPath']);
-            $this->slp->setWalletId(implode(':', $seedParts));
+            $wallet = new \Mint\Wallet(
+                Sanitizer::network($_POST['network']),
+                Sanitizer::seed($_POST['seed']),
+                Sanitizer::derivationPath($_POST['derivationPath'])
+            );
+            $this->slp->setWallet($wallet);
         }
         $this->view->slp = $this->slp;
     }
 
+    /**
+     * Display collections
+     * @throws Exception
+     */
     public function collectionsAction() {
         if (!$this->slp->getWalletId()) {
             $this->redirect('/mint/index');
@@ -28,26 +45,29 @@ class MintController extends \Controller {
         $this->view->tokens = $this->slp->getParentTokens();
     }
 
+    /**
+     * Forget the wallet and redirect
+     */
     public function forgetAction() {
-        if (!$this->slp->getWalletId()) {
-            $this->redirect('/mint/index');
-            return;
-        }
         $this->slp->forgetWallet();
         $this->redirect('/mint/index');
     }
 
+    /**
+     * Mint NFT
+     */
     public function childAction() {
         if (!$this->slp->getWalletId()) {
             $this->redirect('/mint/index');
             return;
         }
-        $this->view->slp = $this->slp;
 
+        $this->view->slp = $this->slp;
         $this->view->collection = null;
         if(isset($_GET['collection'])) {
             $this->view->collection = Sanitizer::hex($_GET['collection']);
         }
+
         if(isset($_POST['submit'])) {
             try {
                 $this->slp->mintChild(
@@ -63,11 +83,15 @@ class MintController extends \Controller {
         }
     }
 
+    /**
+     * Mint collection
+     */
     public function parentAction() {
         if (!$this->slp->getWalletId()) {
             $this->redirect('/mint/index');
             return;
         }
+
         if(isset($_POST['submit'])) {
             try {
                 $this->slp->mintParent(
