@@ -58,4 +58,38 @@ class Wallet {
     public function setIndex($index) {
         $this->index = $index;
     }
+
+    /**
+     * @return int
+     */
+    public function getIndex() {
+        return $this->index;
+    }
+
+    /**
+     * @param null|string $net
+     */
+    public function setNetwork($net = null) {
+        if($net == null) {
+            switch($this->network) {
+                case 'mainnet': $this->network = 'testnet'; break;
+                case 'testnet': $this->network = 'mainnet'; break;
+                default: $this->network = 'testnet';
+            }
+        } else {
+            $this->network = $net;
+        }
+    }
+
+    public function getNetwork() {
+        return $this->network;
+    }
+
+    public function getDerivationPath() {
+        return $this->dp;
+    }
+
+    public function getSeed() {
+        return $this->seed;
+    }
 }

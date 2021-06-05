@@ -104,4 +104,15 @@ class MintController extends \Controller {
             }
         }
     }
+
+    public function plusAction() {
+        $wallet = $this->slp->getWallet();
+        $wallet->setIndex($wallet->getIndex() + 1);
+        $this->redirect('/mint/index');
+    }
+
+    public function networkAction() {
+        $this->slp->getWallet()->setNetwork();
+        $this->redirect('/mint/index');
+    }
 }

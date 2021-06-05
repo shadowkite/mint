@@ -218,4 +218,11 @@ class Slp {
             'batonReceiverSlpAddr' => $this->getAddr(true),
         ]);
     }
+
+    /**
+     * @return Wallet
+     */
+    public function getWallet() {
+        return $_SESSION[$this->cookieName];
+    }
 }

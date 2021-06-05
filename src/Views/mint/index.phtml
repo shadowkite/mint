@@ -24,10 +24,35 @@
                     <a href='https://rest-unstable.mainnet.cash/faucet.html' target='_blank'>https://rest-unstable.mainnet.cash/faucet.html</a>
                 </div>
                 <div class="mb-3">
-                    <span><?php echo $this->slp->getWalletId(); ?></span><br/>
-                    <a href="/mint/forget">Forget wallet</a><br/>
+                    <ul>
+                        <li><a href="/mint/plus">Add +1 to address index</a></li>
+                        <li><a href="/mint/network">Switch network</a></li>
+                        <li><a href="#" onclick="document.getElementById('walletInfo').style.display = 'block'">Show wallet information</a></li>
+                        <li><a href="/mint/forget">Forget wallet</a></li>
+                    </ul>
                 </div>
             </form>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-8" id="walletInfo" style="display:none">
+            <h2>Wallet information</h2>
+            <a href="#" onclick="document.getElementById('walletInfo').style.display = 'none'">Hide wallet information</a>
+            <dl>
+                <dt>Seed</dt>
+                <dd><?php echo $this->slp->getWallet()->getSeed(); ?></dd>
+
+                <dt>Derivation path</dt>
+                <dd><?php echo $this->slp->getWallet()->getDerivationPath(); ?></dd>
+
+                <dt>Network</dt>
+                <dd><?php echo $this->slp->getWallet()->getNetwork(); ?></dd>
+
+                <dt>Address index</dt>
+                <dd><?php echo $this->slp->getWallet()->getIndex(); ?></dd>
+
+                <dt>Wallet ID</dt>
+                <dd><?php echo $this->slp->getWallet()->generateWalletID(); ?></dd>
+            </dl>
         </div>
     </div>
 <?php } else { ?>
