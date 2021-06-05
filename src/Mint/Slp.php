@@ -69,7 +69,7 @@ class Slp {
         if($testnet === null) {
             $testnet = $this->testnet;
         }
-        $result = $this->send('wallet/slp/create', ['network' => ($testnet?'testnet':'mainnet')]);
+        $result = $this->send('wallet/slp/create', ['network' => ($testnet?Slp::NETWORK_TEST:Slp::NETWORK_MAIN)]);
         return $result;
     }
 
@@ -106,12 +106,18 @@ class Slp {
     }
 
     /**
+     * @param string $type
      * @return mixed
      * @throws \Exception
      */
-    public function getBalance() {
+    public function getBalance($type = 'sat') {
         $result = $this->send('wallet/balance', ['walletId' => $this->getWalletId()]);
-        return $result->bch;
+        switch($type) {
+            case 'sat': return $result->sat;
+            case 'usd': return $result->usd;
+            case 'bch': return $result->bch;
+        }
+        return null;
     }
 
     /**

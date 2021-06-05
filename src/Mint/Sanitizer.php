@@ -52,11 +52,11 @@ class Sanitizer {
      */
     public static function network($input) {
         switch($input) {
-            case 'mainnet':
-            case 'testnet':
+            case Slp::NETWORK_MAIN:
+            case Slp::NETWORK_TEST:
                 return $input;
             default:
-                return 'testnet';
+                return Slp::NETWORK_TEST;
         }
     }
 

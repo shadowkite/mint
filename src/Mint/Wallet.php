@@ -72,9 +72,9 @@ class Wallet {
     public function setNetwork($net = null) {
         if($net == null) {
             switch($this->network) {
-                case 'mainnet': $this->network = 'testnet'; break;
-                case 'testnet': $this->network = 'mainnet'; break;
-                default: $this->network = 'testnet';
+                case Slp::NETWORK_TEST: $this->network = Slp::NETWORK_MAIN; break;
+                case Slp::NETWORK_MAIN: $this->network = Slp::NETWORK_TEST; break;
+                default: $this->network = Slp::NETWORK_TEST;
             }
         } else {
             $this->network = $net;
