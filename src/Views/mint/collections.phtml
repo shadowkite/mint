@@ -1,7 +1,7 @@
 <?php if(!count($this->slp->getParentTokens())) { ?>
     <div class="row alert alert-primary">
         <div>
-            You have no collections yet. <a href="/mint/parent">Make a collection first.</a>
+            You have no collections yet. <a href="/mint/collection">Make a collection first.</a>
         </div>
     </div>
 <?php } ?>
@@ -16,7 +16,7 @@
                 <br/>
             </div>
             <div>
-                <a href="/mint/child?collection=<?php echo $token->tokenId; ?>">Mint NFT in this collection</a>
+                <a href="/mint/nft?collection=<?php echo $token->tokenId; ?>">Mint NFT in this collection</a>
             </div>
         </div>
         <?php if(!$this->slp->getChildTokens($token->tokenId)) { ?>

@@ -56,7 +56,7 @@ class MintController extends \Controller {
     /**
      * Mint NFT
      */
-    public function childAction() {
+    public function nftAction() {
         if (!$this->slp->getWalletId()) {
             $this->redirect('/mint/index');
             return;
@@ -89,7 +89,7 @@ class MintController extends \Controller {
     /**
      * Mint collection
      */
-    public function parentAction() {
+    public function collectionAction() {
         if (!$this->slp->getWalletId()) {
             $this->redirect('/mint/index');
             return;
