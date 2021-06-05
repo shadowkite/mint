@@ -19,14 +19,12 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Testnet faucet</label>
-                </div>
-                <div class="mb-3">
-                    <a href='https://rest-unstable.mainnet.cash/faucet.html' target='_blank'>https://rest-unstable.mainnet.cash/faucet.html</a>
+                    <div class="form-control">
+                        <a href='https://rest-unstable.mainnet.cash/faucet.html' target='_blank'>https://rest-unstable.mainnet.cash/faucet.html</a>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <ul>
-                        <li><a href="/mint/plus">Add +1 to address index</a></li>
-                        <li><a href="/mint/network">Switch network</a></li>
                         <li><a href="#" onclick="document.getElementById('walletInfo').style.display = 'block'">Show wallet information</a></li>
                         <li><a href="/mint/forget">Forget wallet</a></li>
                     </ul>
@@ -44,10 +42,10 @@
                 <dt>Derivation path</dt>
                 <dd><?php echo $this->slp->getWallet()->getDerivationPath(); ?></dd>
 
-                <dt>Network</dt>
+                <dt>Network - <a href="/mint/network">Switch network</a></dt>
                 <dd><?php echo $this->slp->getWallet()->getNetwork(); ?></dd>
 
-                <dt>Address index</dt>
+                <dt>Address index - <a href="/mint/plus">Add +1 to address index</a></dt>
                 <dd><?php echo $this->slp->getWallet()->getIndex(); ?></dd>
 
                 <dt>Wallet ID</dt>
