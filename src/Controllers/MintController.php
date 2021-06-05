@@ -70,13 +70,16 @@ class MintController extends \Controller {
 
         if(isset($_POST['submit'])) {
             try {
-                $this->slp->mintChild(
+                $result = $this->slp->mintChild(
                     Sanitizer::hex($_POST['parent']),
                     Sanitizer::tokenName($_POST['name']),
                     Sanitizer::tokenName($_POST['ticker']),
                     Sanitizer::url($_POST['docUrl']),
                     Sanitizer::hex($_POST['docHash']),
                     Sanitizer::address($_POST['receiver']));
+
+                $this->view->success = true;
+                $this->view->tokenId = $result->tokenId;
             } catch(\Exception $e) {
                 $this->view->error = $e->getMessage();
             }
@@ -95,11 +98,14 @@ class MintController extends \Controller {
         $this->view->slp = $this->slp;
         if(isset($_POST['submit'])) {
             try {
-                $this->slp->mintParent(
+                $result = $this->slp->mintParent(
                     Sanitizer::tokenName($_POST['name']),
                     Sanitizer::tokenName($_POST['ticker']),
                     Sanitizer::url($_POST['docUrl']),
                     Sanitizer::hex($_POST['docHash']));
+
+                $this->view->success = true;
+                $this->view->tokenId = $result->tokenId;
             } catch(\Exception $e) {
                 $this->view->error = $e->getMessage();
             }

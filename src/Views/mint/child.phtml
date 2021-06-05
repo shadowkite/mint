@@ -12,6 +12,13 @@
         </div>
     </div>
 <?php } ?>
+<?php if($this->success) { ?>
+    <div class="row">
+        <div class="col-12-md alert alert-success">
+            NFT succesfully created. Token ID: <a href="https://<?php if($this->slp->getWallet()->getNetwork() === \Mint\Slp::NETWORK_TEST) { ?>testnet.<?php } ?>simpleledger.info/token/<?php echo $this->tokenId; ?>" target="_blank"><?php echo $this->tokenId; ?></a>.
+        </div>
+    </div>
+<?php } ?>
 <form method="POST">
     <div class="mb-3">
         <label class="form-label">Collection</label>
