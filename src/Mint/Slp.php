@@ -8,6 +8,11 @@ namespace Mint;
  */
 class Slp {
 
+    const NETWORK_MAIN = 'mainnet';
+    const NETWORK_TEST = 'testnet';
+
+    const FUNDS_WARNING_LEVEL = 2000;
+
     /**
      * @var string
      */

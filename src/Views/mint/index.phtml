@@ -8,6 +8,7 @@
                 <div class="mb-3">
                     <label class="form-label">Funds</label>
                     <input type="text" class="form-control" value="<?php echo sprintf("%.8f", $this->slp->getBalance()); ?>"/>
+                    <div class="form-text">Recommended: Have at least 10.000 satoshi in the wallet. Every NFT requires close to 2.000 satoshi to execute.</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Bitcoin Cash address</label>
@@ -17,12 +18,14 @@
                     <label class="form-label">Simpleledger address</label>
                     <input type="text" class="form-control" value="<?php echo $this->slp->getAddr(true); ?>" />
                 </div>
+                <?php if($this->slp->getWallet()->getNetwork() == \Mint\Slp::NETWORK_TEST) { ?>
                 <div class="mb-3">
                     <label class="form-label">Testnet faucet</label>
                     <div class="form-control">
                         <a href='https://rest-unstable.mainnet.cash/faucet.html' target='_blank'>https://rest-unstable.mainnet.cash/faucet.html</a>
                     </div>
                 </div>
+                <?php } ?>
                 <div class="mb-3">
                     <ul>
                         <li><a href="#" onclick="document.getElementById('walletInfo').style.display = 'block'">Show wallet information</a></li>

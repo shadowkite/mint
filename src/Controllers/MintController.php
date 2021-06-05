@@ -92,6 +92,7 @@ class MintController extends \Controller {
             return;
         }
 
+        $this->view->slp = $this->slp;
         if(isset($_POST['submit'])) {
             try {
                 $this->slp->mintParent(

@@ -1,6 +1,15 @@
 <?php if($this->error) { ?>
-    <div class="row alert alert-danger">
-        <?php echo $this->error; ?>
+    <div class="row">
+        <div class="col-12-md alert alert-danger">
+            <?php echo $this->error; ?>
+        </div>
+    </div>
+<?php } ?>
+<?php if($this->slp->getBalance() < \Mint\Slp::FUNDS_WARNING_LEVEL) { ?>
+    <div class="row">
+        <div class="col-12-md alert alert-danger">
+            Your wallet is low on funds. It is recommended to have at least 10.000 satoshi in your wallet. <a href="/mint/index">See deposit address & QR code.</a></a>
+        </div>
     </div>
 <?php } ?>
 <form method="POST">

@@ -1,50 +1,59 @@
 <?php if($this->error) { ?>
-    <div class="row alert alert-danger">
-        <?php echo $this->error; ?>
+    <div class="row">
+        <div class="col-12-md alert alert-danger">
+            <?php echo $this->error; ?>
+        </div>
     </div>
 <?php } ?>
-    <form method="POST">
-        <div class="mb-3">
-            <label class="form-label">Collection</label>
-            <select required class="form-select" id="parentSelector" name="parent" onchange="document.getElementById('childTickerField').value = document.getElementById('parentSelector').getElementsByTagName('option')[document.getElementById('parentSelector').selectedIndex].getAttribute('data-ticker')">
-                <option value="">-- Select collection --</option>
-                <?php foreach($this->slp->getParentTokens() as $token) { ?>
-                    <?php if($this->collection == $token->tokenId) { $ticker = $token->ticker; } ?>
-                    <option<?php echo $this->collection == $token->tokenId?' selected':''; ?> value="<?php echo $token->tokenId; ?>" data-ticker="<?php echo $token->ticker; ?>"><?php echo $token->name; ?> [$<?php echo $token->ticker; ?>]</option>
-                <?php } ?>
-            </select>
+<?php if($this->slp->getBalance() < \Mint\Slp::FUNDS_WARNING_LEVEL) { ?>
+    <div class="row">
+        <div class="col-12-md alert alert-danger">
+            Your wallet is low on funds. It is recommended to have at least 10.000 satoshi in your wallet. <a href="/mint/index">See deposit address & QR code.</a></a>
         </div>
-        <?php if(!count($this->slp->getParentTokens())) { ?>
-            <div class="mb-3">
-                <div class="alert alert-primary">
-                    You have no collections yet. <a href="/mint/parent">Make a collection first.</a>
-                </div>
+    </div>
+<?php } ?>
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Collection</label>
+        <select required class="form-select" id="parentSelector" name="parent" onchange="document.getElementById('childTickerField').value = document.getElementById('parentSelector').getElementsByTagName('option')[document.getElementById('parentSelector').selectedIndex].getAttribute('data-ticker')">
+            <option value="">-- Select collection --</option>
+            <?php foreach($this->slp->getParentTokens() as $token) { ?>
+                <?php if($this->collection == $token->tokenId) { $ticker = $token->ticker; } ?>
+                <option<?php echo $this->collection == $token->tokenId?' selected':''; ?> value="<?php echo $token->tokenId; ?>" data-ticker="<?php echo $token->ticker; ?>"><?php echo $token->name; ?> [$<?php echo $token->ticker; ?>]</option>
+            <?php } ?>
+        </select>
+    </div>
+    <?php if(!count($this->slp->getParentTokens())) { ?>
+        <div class="mb-3">
+            <div class="alert alert-primary">
+                You have no collections yet. <a href="/mint/parent">Make a collection first.</a>
             </div>
-        <?php } ?>
-        <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input required class="form-control" type="text" name="name" value="" />
-            <div class="form-text">The NFT will have this name.</div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Ticker</label>
-            <input required <?php if(isset($ticker)) { echo "value='" . $ticker . "'"; } ?> class="form-control" type="text" name="ticker" id="childTickerField" />
-            <div class="form-text">Recommended: Enter the same ticker as the collection.</div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Document URL</label>
-            <input required class="form-control" type="text" name="docUrl" />
-            <div class="form-text">Enter the URL to the file, for example the IPFS URL.</div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Document hash</label>
-            <input class="form-control" type="text" name="docHash" />
-            <div class="form-text">Recommended: Enter the sha256sum of the linked file, or leave empty.</div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Token receiver address</label>
-            <input class="form-control" type="text" name="receiver" value="<?php echo $this->slp->getAddr(true); ?>" />
-            <div class="form-text">Recommended: Enter an address where you can manage the NFT easily, like <a href="https://juungle.net/" target="_blank">Juungle</a>-address or <a href="https://zapit.io" target="_blank">Zapit</a>-address.</div>
-        </div>
-        <input class="btn btn-primary" type="submit" value="Create NFT" name="submit" />
-    </form>
+    <?php } ?>
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input required class="form-control" type="text" name="name" value="" />
+        <div class="form-text">The NFT will have this name.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ticker</label>
+        <input required <?php if(isset($ticker)) { echo "value='" . $ticker . "'"; } ?> class="form-control" type="text" name="ticker" id="childTickerField" />
+        <div class="form-text">Recommended: Enter the same ticker as the collection.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Document URL</label>
+        <input required class="form-control" type="text" name="docUrl" />
+        <div class="form-text">Enter the URL to the file, for example the IPFS URL.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Document hash</label>
+        <input class="form-control" type="text" name="docHash" />
+        <div class="form-text">Recommended: Enter the sha256sum of the linked file, or leave empty.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Token receiver address</label>
+        <input class="form-control" type="text" name="receiver" value="<?php echo $this->slp->getAddr(true); ?>" />
+        <div class="form-text">Recommended: Enter an address where you can manage the NFT easily, like <a href="https://juungle.net/" target="_blank">Juungle</a>-address or <a href="https://zapit.io" target="_blank">Zapit</a>-address.</div>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Create NFT" name="submit" />
+</form>
