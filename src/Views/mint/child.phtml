@@ -23,7 +23,7 @@
         <?php } ?>
         <div class="mb-3">
             <label class="form-label">Name</label>
-            <input required class="form-control" type="text" name="name" value="Test #<?php echo uniqid(); ?>" />
+            <input required class="form-control" type="text" name="name" value="" />
             <div class="form-text">The NFT will have this name.</div>
         </div>
         <div class="mb-3">
@@ -44,7 +44,7 @@
         <div class="mb-3">
             <label class="form-label">Token receiver address</label>
             <input class="form-control" type="text" name="receiver" value="<?php echo $this->slp->getAddr(true); ?>" />
-            <div class="form-text">Recommended: Enter an address where you can manage the NFT easily, like <a href="https://juungle.net/">Juungle</a>-address or <a href="https://zapit.io">Zapit</a>-address".</div>
+            <div class="form-text">Recommended: Enter an address where you can manage the NFT easily, like <a href="https://juungle.net/" target="_blank">Juungle</a>-address or <a href="https://zapit.io" target="_blank">Zapit</a>-address.</div>
         </div>
         <input class="btn btn-primary" type="submit" value="Create NFT" name="submit" />
     </form>
