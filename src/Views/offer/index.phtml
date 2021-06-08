@@ -1,0 +1,8 @@
+<div class="row">
+    <?php foreach ($this->tokens as $token) { ?>
+        <div class="col-2">
+            <img src='https://cryptor.at/128/<?php echo $token->tokenId; ?>.png' /><br/>
+            <a href="/offer/new?nft=<?php echo $token->tokenId; ?>" class="btn btn-primary">Create sale</a>
+        </div>
+    <?php } ?>
+</div>

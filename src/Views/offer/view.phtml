@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-2">
+        <img src="https://cryptor.at/128/<?php echo $this->sale->getOfferNft(); ?>.png" />
+    </div>
+    <div class="col-8">
+        <form method="post">
+            <input type="hidden" name="sale" value="<?php echo $this->sale->getId(); ?>" />
+            <label class="form-label">Price</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="<?php echo $this->sale->getCostAmount(); ?>" disabled>
+                <span class="input-group-text" id="basic-addon2"><?php echo $this->sale->getCostTokenTicker(); ?></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Send NFT to:</label>
+                <input type="text" name="tokenReceiver" class="form-control" required placeholder="simpleledger:....">
+            </div>
+            <input type="submit" class="btn btn-primary" name="submit" value="Buy NFT" />
+        </form>
+    </div>
+</div>

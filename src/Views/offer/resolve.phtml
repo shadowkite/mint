@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-2">
+        <img src="https://cryptor.at/128/<?php echo $this->sale->getOfferNft(); ?>.png" />
+    </div>
+    <div class="col-8">
+        <form method="post">
+            <label class="form-label">Price</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="<?php echo $this->sale->getCostAmount(); ?>" disabled>
+                <span class="input-group-text"><?php echo $this->sale->getCostTokenTicker(); ?></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-control" value="<?php echo $this->buyerSlp->getAddr(true); ?>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Paid?</label>
+                <span class="input-group-text" id="basic-addon2"><?php echo $this->paid?'Yes ✅':'No ❌'; ?></span>
+            </div>
+        </form>
+    </div>
+    <div class="col-2">
+        <img src="<?php echo $this->qr; ?>" />
+    </div>
+</div>
+<script type="text/javascript">
+    var getJSON = function(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+            var status = xhr.status;
+            if (status === 200) {
+                callback(null, xhr.response);
+            } else {
+                callback(status, xhr.response);
+            }
+        };
+        xhr.send();
+    };
+
+    recheck = function () {
+        getJSON('/offer/resolveJson?hold=<?php echo $this->purchaseHold->getId(); ?>',
+            function(err, data) {
+                if(data.paid) {
+                    document.getElementById('basic-addon2').innerHTML = 'Yes!';
+                    //setTimeout(function() { window.location = '/offer' }, 1000);
+                } else {
+                    setTimeout(recheck, 1000);
+                }
+
+                if (err !== null) {
+                    alert('Something went wrong: ' + err);
+                } else {
+                    console.log(data);
+                }
+            });
+    }
+
+    window.onload = function() {
+        setTimeout(recheck, 1000);
+    };
+
+
+</script>

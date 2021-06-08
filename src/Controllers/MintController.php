@@ -3,18 +3,13 @@
 use Mint\Slp;
 use Mint\Sanitizer;
 
-class MintController extends \Controller {
-
-    /**
-     * @var Slp
-     */
-    private $slp;
+class MintController extends \Mint\Controller {
 
     /**
      * MintController constructor.
      */
     public function __construct() {
-        $this->slp = new Slp();
+        parent::__construct();
     }
 
     /**
@@ -27,6 +22,7 @@ class MintController extends \Controller {
                 Sanitizer::seed($_POST['seed']),
                 Sanitizer::derivationPath($_POST['derivationPath'])
             );
+            $_SESSION['walletId'] = $wallet;
             $this->slp->setWallet($wallet);
         }
         $this->view->slp = $this->slp;
@@ -41,6 +37,20 @@ class MintController extends \Controller {
             $this->redirect('/mint/index');
             return;
         }
+
+        if(isset($_POST['submit'])) {
+            var_dump($_POST);
+            $token = Sanitizer::hex($_POST['tokenId']);
+            $receiver = Sanitizer::address($_POST['receiver']);
+            try {
+                var_dump($this->slp->sendToken($token, $receiver));
+                $this->view->success = true;
+            } catch(\Exception $e) {
+                $this->view->success = false;
+                $this->view->error = $e->getMessage();
+            }
+        }
+
         $this->view->slp = $this->slp;
         $this->view->tokens = $this->slp->getParentTokens();
     }
@@ -49,7 +59,7 @@ class MintController extends \Controller {
      * Forget the wallet and redirect
      */
     public function forgetAction() {
-        $this->slp->forgetWallet();
+        $_SESSION['walletId'] = null;
         $this->redirect('/mint/index');
     }
 

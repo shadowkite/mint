@@ -1,0 +1,25 @@
+<div class="row">
+    <?php foreach ($this->sales as $sale) { ?>
+        <div class="col-12">
+            <img src='https://cryptor.at/128/<?php echo $sale->getOfferNft(); ?>.png' /><br/>
+            <?php echo $sale->getCostAmount(); ?> <?php echo $sale->getCostTokenTicker(); ?>
+            <?php if(!$sale->isClaimed()) { ?>
+                <a class="btn btn-primary" href="/offer/claim?sale=<?php echo $sale->getId(); ?>">Claim tokens</a>
+            <?php } ?>
+            <?php
+
+            $saleSlp = \Mint\SaleHelper::getSellerSlp($sale);
+            var_dump($saleSlp->getAddr());
+            var_dump($saleSlp->getBalance());
+
+            $holds = \Mint\SaleHelper::getResolvedPurchaseHolds($sale);
+            foreach($holds as $hold) {
+                $buySlp = \Mint\SaleHelper::getBuyerSlp($sale, $hold);
+                var_dump($buySlp->getAddr());
+                var_dump($buySlp->getBalance());
+            }
+            ?>
+        </div>
+    <?php } ?>
+</div>
+

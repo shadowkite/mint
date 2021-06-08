@@ -1,0 +1,7 @@
+<?php echo json_encode([
+    'paid' => $this->paid,
+    'address' => $this->buyerSlp->getAddr(true),
+    'saleAddress' => $this->sellerSlp->getAddr(true),
+    'qr' => $this->qr,
+    'nft' => $this->sale->getOfferNft(),
+]);

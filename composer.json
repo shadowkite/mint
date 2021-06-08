@@ -7,7 +7,9 @@
         }
     },
     "require": {
-        "wdalmut/simple-mvc": "^0.1.6"
+        "wdalmut/simple-mvc": "^0.1.6",
+        "chillerlan/php-qrcode": "^4.3",
+        "doctrine/orm": "^2.9"
     },
     "autoload": {
         "psr-4": {"Mint\\": "src/Mint"}

@@ -1,0 +1,33 @@
+<?php if($this->error) { ?>
+    <div class="row">
+        <div class="col-12-md alert alert-danger">
+            <?php echo $this->error; ?>
+        </div>
+    </div>
+<?php } else { ?>
+<?php if($this->success) { ?>
+    <div class="row">
+        <div class="col-12-md alert alert-success">
+            Sale succesfully created. <a href="/offer/view?sale=<?php echo $this->sale->getId(); ?>" target="_blank">Go to sale >></a>.
+        </div>
+    </div>
+<?php } ?>
+<div class="row">
+    <div class="col-2">
+        <img src="https://cryptor.at/128/<?php echo $this->nft; ?>.png" />
+    </div>
+    <div class="col-4">
+        <form method="POST">
+            <label class="form-label">Price</label>
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" name="amount" placeholder="1234" required value="" />
+                <select class="form-select" name="tokenId" required>
+                    <option value="">-- Token --</option>
+                    <option value="<?php echo \OfferController::MNC_TOKEN; ?>>">MNC</option>
+                </select>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Create sale" name="submit" />
+        </form>
+    </div>
+</div>
+<?php } ?>

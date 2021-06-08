@@ -13,20 +13,35 @@ class Slp {
 
     const FUNDS_WARNING_LEVEL = 2000;
 
+    const WALLET_GROUP_RECEIVE = 0;
+    const WALLET_GROUP_CHANGE = 1;
+    const WALLET_GROUP_SALE = 2;
+    const WALLET_GROUP_BUY = 3;
+
     /**
-     * @var string
+     * @var Wallet
      */
-    private $cookieName = 'walletId';
+    private Wallet $wallet;
 
     /**
      * @var bool
      */
-    private $testnet = true;
+    private bool $testnet = true;
 
     /**
      * @var array
      */
-    private $tokenBalance;
+    private array $tokenBalance;
+
+    /**
+     * @var int seed group
+     */
+    private int $group = 0;
+
+    /**
+     * @var int seed address index
+     */
+    private int $addressIndex = 0;
 
     /**
      * @param $url
@@ -51,13 +66,6 @@ class Slp {
             throw new \Exception('Wallet communication error: ' . $result->message);
         }
         return $result;
-    }
-
-    /**
-     * Resets wallet storage data
-     */
-    public function forgetWallet() {
-        $_SESSION[$this->cookieName] = null;
     }
 
     /**
@@ -86,23 +94,18 @@ class Slp {
      * @param Wallet $wallet
      */
     public function setWallet(Wallet $wallet) {
-        $_SESSION[$this->cookieName] = $wallet;
+        $this->wallet = $wallet;
     }
 
     /**
      * @return string|null
      */
     public function getWalletId() {
-        if(!isset($_SESSION[$this->cookieName])) {
+        if(!$this->wallet) {
             return null;
         }
         /** @var Wallet $wallet */
-        $wallet = $_SESSION[$this->cookieName];
-        if($wallet instanceof Wallet) {
-            return $wallet->generateWalletId();
-        }
-
-        return null;
+        return $this->wallet->generateWalletId($this->group, $this->addressIndex);
     }
 
     /**
@@ -111,7 +114,7 @@ class Slp {
      * @throws \Exception
      */
     public function getBalance($type = 'sat') {
-        $result = $this->send('wallet/balance', ['walletId' => $this->getWalletId()]);
+        $result = $this->send('wallet/max_amount_to_send', ['walletId' => $this->getWalletId(), 'slpAware' => true]);
         switch($type) {
             case 'sat': return $result->sat;
             case 'usd': return $result->usd;
@@ -173,10 +176,12 @@ class Slp {
      * @return array
      * @throws \Exception
      */
-    public function getChildTokens($parent) {
+    public function getChildTokens($parent = null) {
         $children = [];
         foreach($this->getSlpBalance() as $token) {
-            if($token->type == 65 AND $token->parentTokenId === $parent) {
+            if($token->type == 65
+                AND ($parent === null OR ($parent !== null AND $token->parentTokenId === $parent))
+            ) {
                 $children[] = $token;
             }
         }
@@ -202,6 +207,18 @@ class Slp {
             'endBaton' => false,
             'tokenReceiverSlpAddr' => $this->getAddr(true),
             'batonReceiverSlpAddr' => $this->getAddr(true),
+        ]);
+    }
+
+    /**
+     * @param $receiver
+     * @return mixed
+     * @throws \Exception
+     */
+    public function sendAll($receiver) {
+        return $this->send('wallet/send_max', [
+            'walletId' => $this->getWalletId(),
+            'cashaddr' => $receiver
         ]);
     }
 
@@ -234,6 +251,97 @@ class Slp {
      * @return Wallet
      */
     public function getWallet() {
-        return $_SESSION[$this->cookieName];
+        return $this->wallet;
+    }
+
+    public function sendFunds($receiver, $sats) {
+        return $this->send('wallet/send', [
+            'walletId' => $this->getWalletId(),
+            'to' => [
+                'cashaddr' => $receiver,
+                'value' => $sats,
+                'unit' => 'sat',
+            ],
+            'options' => [
+                'slpAware' => true
+            ]
+        ]);
+    }
+
+    public function checkFunds($addressIndex, $amount, $tokenId = null) {
+        if($tokenId) {
+            $slpTokens = $this->getSlpBalance();
+            foreach($slpTokens as $tokens) {
+                if($tokenId == $tokens->tokenId) {
+                    if($tokens->value >= $amount) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            $balance = $this->getBalance();
+            if($balance >= $amount) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public function sendToken($tokenId, $receiver, $amount = 1) {
+        $data = [];
+        $data['walletId'] = $this->getWalletId();
+        $data['to'] = [];
+        $data['to'][] = [
+            'slpaddr' => $receiver,
+            'value' => $amount,
+            'tokenId' => $tokenId
+        ];
+        $data['options'] = [
+            'slpAware' => true
+        ];
+        return $this->send('wallet/slp/send', $data);
+    }
+
+    /**
+     * @return int
+     */
+    public function getGroup(): int
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param int $group
+     */
+    public function setGroup(int $group): void
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAddressIndex(): int
+    {
+        return $this->addressIndex;
+    }
+
+    /**
+     * @param int $addressIndex
+     */
+    public function setAddressIndex(int $addressIndex): void
+    {
+        $this->addressIndex = $addressIndex;
+    }
+
+    public function getNewSLP($group = 0, $addrIndex = 0) {
+        $slp = new Slp;
+        $wallet = clone $this->getWallet();
+        $slp->setWallet($wallet);
+        $slp->setGroup($group);
+        $slp->setAddressIndex($addrIndex);
+
+        return $slp;
     }
 }
