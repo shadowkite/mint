@@ -17,6 +17,7 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/mint/index">🏠 &nbsp; Home</a>
                 </li>
+                <?php if(!isset($_SESSION['selling']) OR !$_SESSION['selling']) { ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/mint/collections">🏛 &nbsp; My collections</a>
                 </li>
@@ -26,15 +27,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/mint/collection">📚 &nbsp; New collection</a>
                 </li>
+                <?php } else { ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/offer">📚 &nbsp; Inventory</a>
+                    <a class="nav-link" href="/offer">🖼 &nbsp; Inventory</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/offer/list">📚 &nbsp; Sales</a>
+                    <a class="nav-link" href="/offer/list">👑 &nbsp; Sales</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/offer/sales">📚 &nbsp; Sold items</a>
+                    <a class="nav-link" href="/offer/sales">💸 &nbsp; Sold items</a>
                 </li>
+                <?php } ?>
             </ul>
         </div>
     </div>

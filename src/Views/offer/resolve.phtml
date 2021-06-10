@@ -45,7 +45,7 @@
             function(err, data) {
                 if(data.paid) {
                     document.getElementById('basic-addon2').innerHTML = 'Yes!';
-                    //setTimeout(function() { window.location = '/offer' }, 1000);
+                    setTimeout(function() { window.location = '/offer' }, 1000);
                 } else {
                     setTimeout(recheck, 1000);
                 }

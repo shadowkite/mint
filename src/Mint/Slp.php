@@ -188,6 +188,15 @@ class Slp {
         return $children;
     }
 
+    public function getChildNfts($parent = null) {
+        $nfts = [];
+        foreach($this->getChildTokens($parent) as $token) {
+            $nft = Nft::factory($token->tokenId, $this);
+            $nfts[] = $nft;
+        }
+        return $nfts;
+    }
+
     /**
      * @param $name
      * @param $ticker

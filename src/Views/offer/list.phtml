@@ -8,3 +8,23 @@
 <?php } ?>
 </div>
 
+
+<h1>NFTs for sale</h1>
+<div class="row">
+    <?php foreach ($this->nfts as $nft) { ?>
+        <div class="col-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo $nft->getTokenName(); ?> [<?php echo $nft->getTokenTicker() ?>]</h5>
+                    <p class="card-text">
+                        <img src='<?php echo $nft->getImageUrl(); ?>' class="img-fluid"/>
+                    </p>
+                    <p class="card-text">
+                        <?php echo $nft->getSale()->getCostAmount(); ?> <?php echo $nft->getSale()->getCostTokenTicker(); ?><br/>
+                        <a href="/offer/view?sale=<?php echo $nft->getSale()->getId(); ?>" class="btn btn-primary">View offer</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>

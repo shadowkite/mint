@@ -1,3 +1,4 @@
+<h1>Create sale offer</h1>
 <?php if($this->error) { ?>
     <div class="row">
         <div class="col-12-md alert alert-danger">
@@ -13,21 +14,37 @@
     </div>
 <?php } ?>
 <div class="row">
-    <div class="col-2">
-        <img src="https://cryptor.at/128/<?php echo $this->nft; ?>.png" />
-    </div>
-    <div class="col-4">
-        <form method="POST">
-            <label class="form-label">Price</label>
-            <div class="input-group mb-3">
-                <input class="form-control" type="text" name="amount" placeholder="1234" required value="" />
-                <select class="form-select" name="tokenId" required>
-                    <option value="">-- Token --</option>
-                    <option value="<?php echo \OfferController::MNC_TOKEN; ?>>">MNC</option>
-                </select>
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-2">
+                    <img class="img-fluid" src="<?php echo $this->nft->getImageUrl(); ?>" />
+                </div>
+                <div class="col-md-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo $this->nft->getTokenName(); ?> [<?php echo $this->nft->getTokenTicker() ?>]</h5>
+                        <form method="POST">
+                            <label class="form-label">Price</label>
+                            <div class="input-group mb-3">
+                                <input class="form-control" type="text" name="amount" placeholder="1234" required value="" />
+                                <select class="form-select" name="tokenId" required>
+                                    <option value="">-- Token --</option>
+                                    <?php
+                                        echo $tokens = \OfferController::TOKENS;
+                                        foreach($tokens as $ticker => $token) {
+                                            if($token['network'] === $this->slp->getWallet()->getNetwork()) {
+                                                ?><option value="<?php echo $token['tokenId'] ?>>"><?php echo $ticker; ?></option><?php
+                                            }
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                            <input class="btn btn-primary" type="submit" value="Create sale" name="submit" />
+                        </form>
+                    </div>
+                </div>
             </div>
-            <input class="btn btn-primary" type="submit" value="Create sale" name="submit" />
-        </form>
+        </div>
     </div>
 </div>
 <?php } ?>

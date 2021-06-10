@@ -7,14 +7,19 @@ use Mint\Controller;
  */
 class OfferController extends Controller {
 
-    const MNC_TOKEN = '132731d90ac4c88a79d55eae2ad92709b415de886329e958cf35fdd81ba34c15';
+    const TOKENS = [
+        'MNC' => ['network' => 'testnet', 'tokenId' => '132731d90ac4c88a79d55eae2ad92709b415de886329e958cf35fdd81ba34c15'],
+        'ASHGOLD' => ['network' => 'mainnet', 'tokenId' => '27944ef5b92eee4ca8891541c9c8085bc859aa3c6a2c08ba6ecd46bb7e285a27'],
+        'ANFTR' => ['network' => 'mainnet', 'tokenId' => 'a15ee1eb4e03ff41013b5db3c0b82a0da568b6607d5a2750fadcb57f2afd4f01'],
+        '😈' => ['network' => 'mainnet', 'tokenId' => 'd7fdda8351e9466d9a51c8b2c1a7ee5aa47b122e2116ae4efcef8f698bc4ec60'],
+    ];
 
     public function __construct() {
         parent::__construct();
     }
 
     public function indexAction() {
-        $this->view->tokens = $this->slp->getChildTokens();
+        $this->view->tokens = $this->slp->getChildNfts();
     }
 
     public function listAction() {
@@ -23,7 +28,13 @@ class OfferController extends Controller {
         $sales = $salesRepository->findBy([
             'sold' => false
         ]);
-        $this->view->sales = $sales;
+        $nfts = [];
+        foreach($sales as $sale) {
+            $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+            $nft->setSale($sale);
+            $nfts[] = $nft;
+        }
+        $this->view->nfts = $nfts;
     }
 
     private function resolve($purchaseHoldId) {
@@ -88,7 +99,6 @@ class OfferController extends Controller {
                 if(count($am)) {
                     die('Hold already exists');
                 }
-
                 $purchaseHold = new \Mint\Models\PurchaseHold();
                 $purchaseHold->setSale($_POST['sale']);
                 $purchaseHold->setTimestamp(time());
@@ -99,19 +109,25 @@ class OfferController extends Controller {
                 $this->redirect('/offer/resolve?hold=' . $purchaseHold->getId());
             }
 
+            $saleId = $_GET['sale'];
             $repository = $this->em->getRepository(\Mint\Models\Sale::class);
             /** @var \Mint\Models\Sale $sale */
-            $sale = $repository->find($_GET['sale']);
-            $this->view->sale = $sale;
+            $sale = $repository->find($saleId);
+            $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+            $nft->setSale($sale);
+
+            $this->view->nft = $nft;
         } catch (\Exception $e) {
-            var_dump($e);
             $this->view->error = $e->getMessage();
         }
     }
 
     public function newAction() {
         $tokenOffer = \Mint\Sanitizer::hex($_GET['nft']);
-        $this->view->nft = $tokenOffer;
+        $saleSlp = $this->slp->getNewSLP();
+        $nft = \Mint\Nft::factory($tokenOffer, $this->slp);
+
+        $this->view->nft = $nft;
         if(!$this->slp->checkFunds(0, 1, $tokenOffer)) {
             $this->view->error = "You do not own this asset";
             return;
@@ -120,16 +136,17 @@ class OfferController extends Controller {
             $this->view->error = "To create a sale you need at least 3.000 satoshi";
             return;
         }
+        $this->view->slp = $this->slp;
 
-        $saleSlp = $this->slp->getNewSLP();
         try {
             if (isset($_POST['submit'])) {
-                $tokenInfo = $saleSlp->getTokenInfo(\Mint\Sanitizer::hex($_POST['tokenId']));
+
+                $costTokenInfo = $saleSlp->getTokenInfo(\Mint\Sanitizer::hex($_POST['tokenId']));
 
                 $sale = new \Mint\Models\Sale();
                 $sale->setCostAmount((float) $_POST['amount']);
-                $sale->setCostTokenId($tokenInfo->tokenId);
-                $sale->setCostTokenTicker($tokenInfo->ticker);
+                $sale->setCostTokenId($costTokenInfo->tokenId);
+                $sale->setCostTokenTicker($costTokenInfo->ticker);
                 $sale->setOfferNft($tokenOffer);
                 $sale->setSeller(hash('sha256', $saleSlp->getWalletId()));
 
@@ -163,6 +180,41 @@ class OfferController extends Controller {
             'seller' => hash('sha256', $this->slp->getWalletId()),
             'sold' => true
         ]);
-        $this->view->sales = $sales;
+        $nfts = [];
+        foreach($sales as $sale) {
+            $nfts[] = $nft = \Mint\Nft::factory($sale->getOfferNFT(), $this->slp);
+            $nft->setSale($sale);
+        }
+
+        $this->view->nfts = $nfts;
+    }
+
+    public function claimAction() {
+        try {
+            /** @var \Mint\Models\Sale $sale */
+            $sale = $this->em->getRepository(\Mint\Models\Sale::class)->find($_GET['sale']);
+
+            /** @var \Mint\Models\PurchaseHold[] $holds */
+            $holds = $this->em
+                ->getRepository(\Mint\Models\PurchaseHold::class)
+                ->findBy([
+                    'sale' => $sale->getId(),
+                    'funded' => true
+                ]);
+            $sellerSlp = \Mint\SaleHelper::getSellerSlp($sale);
+            foreach ($holds as $hold) {
+                $slp = \Mint\SaleHelper::getBuyerSlp($sale, $hold);
+                var_dump($sellerSlp->sendAll($slp->getAddr()));
+                var_dump($slp->sendToken(
+                    $sale->getCostTokenId(),
+                    'simpleledger:qqn4v9mr0dzgcnt8qfq69yqpyxgfps3pu5le4285x7',
+                    $sale->getCostAmount()
+                ));
+                $sale->setClaimed(true);
+            }
+        } catch(\Exception $e) {
+
+        }
+        $this->redirect('/offer/sales');
     }
 }

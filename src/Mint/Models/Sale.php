@@ -187,7 +187,7 @@ class Sale {
     /**
      * @return bool
      */
-    public function isClaimed(): bool
+    public function isClaimed()
     {
         return $this->claimed;
     }

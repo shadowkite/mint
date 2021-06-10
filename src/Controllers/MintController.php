@@ -39,11 +39,10 @@ class MintController extends \Mint\Controller {
         }
 
         if(isset($_POST['submit'])) {
-            var_dump($_POST);
             $token = Sanitizer::hex($_POST['tokenId']);
             $receiver = Sanitizer::address($_POST['receiver']);
             try {
-                var_dump($this->slp->sendToken($token, $receiver));
+                $this->slp->sendToken($token, $receiver);
                 $this->view->success = true;
             } catch(\Exception $e) {
                 $this->view->success = false;
