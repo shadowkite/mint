@@ -114,7 +114,7 @@ class Slp {
      * @throws \Exception
      */
     public function getBalance($type = 'sat') {
-        $result = $this->send('wallet/max_amount_to_send', ['walletId' => $this->getWalletId(), 'slpAware' => true]);
+        $result = $this->send('wallet/balance', ['walletId' => $this->getWalletId()]);
         switch($type) {
             case 'sat': return $result->sat;
             case 'usd': return $result->usd;
