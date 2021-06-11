@@ -55,6 +55,9 @@ if($this->slp->getWalletId()) { ?>
 
                 <dt>Wallet ID</dt>
                 <dd><?php echo $this->slp->getWallet()->generateWalletID(); ?></dd>
+
+                <dt>Sale account - <a href="/index/saleaccount">Enable/disable</a></dt>
+                <dd><?php echo $_SESSION['selling']?'Yes':'No'; ?></dd>
             </dl>
         </div>
     </div>

@@ -1,0 +1,46 @@
+<h1>Sales history</h1>
+<div class="row">
+    <?php foreach ($this->nfts as $nft) { ?>
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-2">
+                        <img class="img-fluid" src="<?php echo $nft->getImageUrl(); ?>" />
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo $nft->getTokenName(); ?> [<?php echo $nft->getTokenTicker() ?>]</h5>
+                            <div class="card-text">
+                                <?php echo $nft->getSale()->getCostAmount(); ?> <?php echo $nft->getSale()->getCostTokenTicker(); ?><br/>
+                                <?php if(!$nft->getSale()->isClaimed()) { ?>
+                                    <a class="btn btn-primary" href="/offer/claim?sale=<?php echo $nft->getSale()->getId(); ?>">Claim tokens</a>
+                                <?php } else { ?>
+                                    <span class="btn btn-light">Claimed</span>
+                                <?php } ?>
+                            </div>
+                            <!--div class="card-text">
+                                <dl>
+                                    <?php $saleSlp = \Mint\SaleHelper::getSellerSlp($nft->getSale()); ?>
+                                    <dt>Sale address</dt>
+                                    <dd><?php echo $saleSlp->getAddr(); ?> / <?php echo $saleSlp->getBalance(); ?></dd>
+
+                                    <?php
+                                        $holds = \Mint\SaleHelper::getResolvedPurchaseHolds($nft->getSale());
+                                        foreach($holds as $hold) {
+                                            $buySlp = \Mint\SaleHelper::getBuyerSlp($nft->getSale(), $hold);
+                                            ?>
+                                            <dt>Deposit address</dt>
+                                            <dd><?php echo $buySlp->getAddr(); ?> / <?php echo $buySlp->getBalance(); ?></dd>
+                                            <?php
+                                        }
+                                    ?>
+                                </dl>
+                            </--div-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+

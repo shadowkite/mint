@@ -1,0 +1,19 @@
+<h1>Inventory</h1>
+<div class="row">
+    <?php foreach ($this->tokens as $nft) { ?>
+        <div class="col-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo $nft->getTokenName(); ?> [<?php echo $nft->getTokenTicker() ?>]</h5>
+                    <p class="card-text">
+                        <img src='<?php echo $nft->getImageUrl(); ?>' class="img-fluid"/>
+                    </p>
+                    <p class="card-text">
+                        <!--a href="#nft=<?php echo $nft->getTokenId(); ?>" class="btn btn-primary">Send</a-->
+                        <a href="/offer/new?nft=<?php echo $nft->getTokenId(); ?>" class="btn btn-primary">Create sale</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>

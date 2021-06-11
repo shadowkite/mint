@@ -1,0 +1,13 @@
+<?php echo json_encode([
+    'paid' => $this->paid,
+    'address' => $this->buyerSlp->getAddr(true),
+    'saleAddress' => $this->sellerSlp->getAddr(true),
+    'qr' => $this->qr,
+    'qr_invoice' => $this->qr_invoice,
+    'nft' => $this->sale->getOfferNft(),
+    'percentageLeft' => $this->percentageLeft,
+    'secondsLeft' => max($this->secondsLeft, 0),
+    'end' => $this->purchaseHoldEnd,
+    'now' => time(),
+    'expired' => ($this->secondsLeft < 0),
+]);
