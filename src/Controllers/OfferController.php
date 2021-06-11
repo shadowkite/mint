@@ -253,6 +253,8 @@ class OfferController extends Controller {
                 );
                 $sale->setClaimed(true);
             }
+            $this->em->persist($sale);
+            $this->em->flush();
         } catch(\Exception $e) {
 
         }
