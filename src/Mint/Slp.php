@@ -191,7 +191,7 @@ class Slp {
     public function getChildNfts($parent = null) {
         $nfts = [];
         foreach($this->getChildTokens($parent) as $token) {
-            $nft = Nft::factory($token->tokenId, $this);
+            $nft = Nft::factory($token->tokenId);
             $nfts[] = $nft;
         }
         return $nfts;

@@ -106,7 +106,7 @@ class PurchaseHold {
     /**
      * @return bool
      */
-    public function isFunded(): bool
+    public function isFunded()
     {
         return $this->funded;
     }
@@ -122,7 +122,7 @@ class PurchaseHold {
     /**
      * @return bool
      */
-    public function isExpired(): bool
+    public function isExpired()
     {
         return $this->expired;
     }
