@@ -19,7 +19,11 @@ class OfferController extends Controller {
     }
 
     public function indexAction() {
-        $this->view->tokens = $this->slp->getChildNfts();
+        if($this->slp->getWallet()) {
+            $this->view->tokens = $this->slp->getChildNfts();
+        } else {
+            $this->redirect('/');
+        }
     }
 
     public function listAction() {
@@ -109,12 +113,16 @@ class OfferController extends Controller {
                 $purchaseHoldRepository = $this->em->getRepository(\Mint\Models\PurchaseHold::class);
 
                 /** @var \Mint\Models\PurchaseHold[] $holds */
-                $holds = $purchaseHoldRepository->findBy(['sale' => $_POST['sale'], 'expired' => false]);
+                $holds = $purchaseHoldRepository->findBy(['sale' => $_POST['sale']]);
                 $verifiedHolds = [];
                 foreach($holds as $hold) {
                     if($hold->getTimestamp() + (5*60) < time()) {
-                        $hold->setFunded(false);
-                        $hold->setExpired(true);
+                        if(!$hold->isExpired()) {
+                            $hold->setFunded(false);
+                            $hold->setExpired(true);
+                            $this->em->persist($hold);
+                            $this->em->flush();
+                        }
                     } else {
                         $verifiedHolds[] = $hold;
                     }
