@@ -31,7 +31,7 @@ class OfferController extends Controller {
 
         $nfts = [];
         foreach($sales as $sale) {
-            $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+            $nft = \Mint\Nft::factory($sale->getOfferNft());
             $nft->setSale($sale);
             $nfts[] = $nft;
         }
@@ -54,7 +54,7 @@ class OfferController extends Controller {
         $buyerSlp = \Mint\SaleHelper::getBuyerSlp($sale, $purchaseHold);
         $sellerSlp = \Mint\SaleHelper::getSellerSlp($sale);
 
-        $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+        $nft = \Mint\Nft::factory($sale->getOfferNft());
         $nft->setSale($sale);
 
         $this->view->nft = $nft;
@@ -138,7 +138,7 @@ class OfferController extends Controller {
             $repository = $this->em->getRepository(\Mint\Models\Sale::class);
             /** @var \Mint\Models\Sale $sale */
             $sale = $repository->find($saleId);
-            $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+            $nft = \Mint\Nft::factory($sale->getOfferNft());
             $nft->setSale($sale);
 
             $this->view->nft = $nft;
@@ -150,7 +150,7 @@ class OfferController extends Controller {
     public function newAction() {
         $tokenOffer = \Mint\Sanitizer::hex($_GET['nft']);
         $saleSlp = $this->slp->getNewSLP();
-        $nft = \Mint\Nft::factory($tokenOffer, $this->slp);
+        $nft = \Mint\Nft::factory($tokenOffer);
 
         $this->view->nft = $nft;
         if(!$this->slp->checkFunds(0, 1, $tokenOffer)) {
@@ -209,7 +209,7 @@ class OfferController extends Controller {
         ]);
         $nfts = [];
         foreach($sales as $sale) {
-            $nfts[] = $nft = \Mint\Nft::factory($sale->getOfferNFT(), $this->slp);
+            $nfts[] = $nft = \Mint\Nft::factory($sale->getOfferNFT());
             $nft->setSale($sale);
         }
 

@@ -28,7 +28,14 @@ class Nft {
 
     public static function factory($tokenId, Slp $slp = null) {
         if(!$slp) {
-            $slp = new Slp;
+            $slp = new \Mint\Slp();
+            $slp->setWallet(
+                new \Mint\Wallet(
+                    \Mint\Slp::NETWORK_MAIN,
+                    'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon',
+                    "m/44'/245'/0'"
+                )
+            );
         }
 
         $info = $slp->getTokenInfo($tokenId);
