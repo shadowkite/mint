@@ -16,10 +16,11 @@ class Controller extends \Controller {
     protected \Mint\Slp $slp;
 
     public function __construct() {
-        $this->em = Db::getEM();
         $this->slp = new \Mint\Slp();
         if(isset($_SESSION['walletId'])) {
             $this->slp->setWallet($_SESSION['walletId']);
         }
+
+        $this->em = Db::getEM();
     }
 }

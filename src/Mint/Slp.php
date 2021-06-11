@@ -21,7 +21,7 @@ class Slp {
     /**
      * @var Wallet
      */
-    private Wallet $wallet;
+    private $wallet;
 
     /**
      * @var bool

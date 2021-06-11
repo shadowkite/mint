@@ -19,9 +19,15 @@ class SaleHelper {
         return $sellerSlp->getNewSLP(Slp::WALLET_GROUP_SALE, $sale->getId());
     }
 
-    public static function getQR(Sale $sale, PurchaseHold $hold) {
+    public static function getQRInvoice(Sale $sale, PurchaseHold $hold) {
         $qr = new QRCode();
         $data = self::getBuyerSlp($sale, $hold)->getAddr(true) . "?amount1=" . $sale->getCostAmount() . "-" . $sale->getCostTokenId();
+        return $qr->render($data);
+    }
+
+    public static function getQR(Sale $sale, PurchaseHold $hold) {
+        $qr = new QRCode();
+        $data = self::getBuyerSlp($sale, $hold)->getAddr(true);
         return $qr->render($data);
     }
 

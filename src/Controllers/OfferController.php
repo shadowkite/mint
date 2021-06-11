@@ -28,6 +28,7 @@ class OfferController extends Controller {
         $sales = $salesRepository->findBy([
             'sold' => false
         ]);
+
         $nfts = [];
         foreach($sales as $sale) {
             $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
@@ -37,7 +38,7 @@ class OfferController extends Controller {
         $this->view->nfts = $nfts;
     }
 
-    private function resolve($purchaseHoldId) {
+    private function resolve($purchaseHoldId, $checkFunds = false) {
         $purchaseHoldRepository = $this->em->getRepository(\Mint\Models\PurchaseHold::class);
         $saleRepository = $this->em->getRepository(\Mint\Models\Sale::class);
 
@@ -53,14 +54,25 @@ class OfferController extends Controller {
         $buyerSlp = \Mint\SaleHelper::getBuyerSlp($sale, $purchaseHold);
         $sellerSlp = \Mint\SaleHelper::getSellerSlp($sale);
 
+        $nft = \Mint\Nft::factory($sale->getOfferNft(), $this->slp);
+        $nft->setSale($sale);
+
+        $this->view->nft = $nft;
         $this->view->sale = $sale;
         $this->view->purchaseHold = $purchaseHold;
         $this->view->buyerSlp = $buyerSlp;
         $this->view->sellerSlp = $sellerSlp;
         $this->view->qr = \Mint\SaleHelper::getQR($sale, $purchaseHold);
+        $this->view->qr_invoice = \Mint\SaleHelper::getQRInvoice($sale, $purchaseHold);
+
+        $_5m = (5*60);
+        $secondsPassed = ($purchaseHold->getTimestamp() + $_5m) - time();
+        $this->view->percentageLeft = max(($secondsPassed / $_5m) * 100, 0);
+        $this->view->secondsLeft = $secondsPassed;
+        $this->view->purchaseHoldEnd = ($purchaseHold->getTimestamp() + $_5m);
 
         $this->view->paid = false;
-        if($buyerSlp->checkFunds($purchaseHold->getId(), $sale->getCostAmount(), $sale->getCostTokenId())) {
+        if($checkFunds && $buyerSlp->checkFunds($purchaseHold->getId(), $sale->getCostAmount(), $sale->getCostTokenId())) {
             try {
                 $sellerSlp->sendToken($sale->getOfferNFT(), $purchaseHold->getTokenReceiver(), 1);
                 $purchaseHold->setFunded(true);
@@ -80,7 +92,7 @@ class OfferController extends Controller {
     public function resolveJsonAction() {
         header('Content-type: application/json');
         $this->disableLayout();
-        $this->resolve($_GET['hold']);
+        $this->resolve($_GET['hold'], true);
     }
 
     public function resolveAction() {
@@ -95,18 +107,31 @@ class OfferController extends Controller {
         try {
             if(isset($_POST['submit'])) {
                 $purchaseHoldRepository = $this->em->getRepository(\Mint\Models\PurchaseHold::class);
-                $am = $purchaseHoldRepository->findBy(['sale' => $_POST['sale']]);
-                if(count($am)) {
-                    die('Hold already exists');
+
+                /** @var \Mint\Models\PurchaseHold[] $holds */
+                $holds = $purchaseHoldRepository->findBy(['sale' => $_POST['sale'], 'expired' => false]);
+                $verifiedHolds = [];
+                foreach($holds as $hold) {
+                    if($hold->getTimestamp() + (5*60) < time()) {
+                        $hold->setFunded(false);
+                        $hold->setExpired(true);
+                    } else {
+                        $verifiedHolds[] = $hold;
+                    }
                 }
-                $purchaseHold = new \Mint\Models\PurchaseHold();
-                $purchaseHold->setSale($_POST['sale']);
-                $purchaseHold->setTimestamp(time());
-                $purchaseHold->setTokenReceiver($_POST['tokenReceiver']);
-                $purchaseHold->setFunded(false);
-                $this->em->persist($purchaseHold);
-                $this->em->flush();
-                $this->redirect('/offer/resolve?hold=' . $purchaseHold->getId());
+
+                if(count($verifiedHolds) > 0) {
+                    $this->view->error = "Purchase hold already exists.";
+                } else {
+                    $purchaseHold = new \Mint\Models\PurchaseHold();
+                    $purchaseHold->setSale($_POST['sale']);
+                    $purchaseHold->setTimestamp(time());
+                    $purchaseHold->setTokenReceiver($_POST['tokenReceiver']);
+                    $purchaseHold->setFunded(false);
+                    $this->em->persist($purchaseHold);
+                    $this->em->flush();
+                    $this->redirect('/offer/resolve?hold=' . $purchaseHold->getId());
+                }
             }
 
             $saleId = $_GET['sale'];
@@ -174,6 +199,9 @@ class OfferController extends Controller {
         }
     }
 
+    /**
+     *
+     */
     public function salesAction() {
         $saleRepository = $this->em->getRepository(\Mint\Models\Sale::class);
         $sales = $saleRepository->findBy([
@@ -189,10 +217,15 @@ class OfferController extends Controller {
         $this->view->nfts = $nfts;
     }
 
+    /**
+     *
+     */
     public function claimAction() {
         try {
             /** @var \Mint\Models\Sale $sale */
-            $sale = $this->em->getRepository(\Mint\Models\Sale::class)->find($_GET['sale']);
+            $sale = $this->em
+                ->getRepository(\Mint\Models\Sale::class)
+                ->find($_GET['sale']);
 
             /** @var \Mint\Models\PurchaseHold[] $holds */
             $holds = $this->em
@@ -201,15 +234,16 @@ class OfferController extends Controller {
                     'sale' => $sale->getId(),
                     'funded' => true
                 ]);
+
             $sellerSlp = \Mint\SaleHelper::getSellerSlp($sale);
             foreach ($holds as $hold) {
                 $slp = \Mint\SaleHelper::getBuyerSlp($sale, $hold);
-                var_dump($sellerSlp->sendAll($slp->getAddr()));
-                var_dump($slp->sendToken(
+                $sellerSlp->sendAll($slp->getAddr());
+                $slp->sendToken(
                     $sale->getCostTokenId(),
-                    'simpleledger:qqn4v9mr0dzgcnt8qfq69yqpyxgfps3pu5le4285x7',
+                    $this->slp->getAddr(true),
                     $sale->getCostAmount()
-                ));
+                );
                 $sale->setClaimed(true);
             }
         } catch(\Exception $e) {

@@ -37,9 +37,15 @@ class PurchaseHold {
 
     /**
      * @var bool
-     * @Column(type="boolean")
+     * @Column(type="boolean", nullable="true", options={"default": false})
      */
     private $funded;
+
+    /**
+     * @var bool
+     * @Column(type="boolean", nullable="true", options={"default": false})
+     */
+    private $expired;
 
     /**
      * @return int
@@ -111,5 +117,21 @@ class PurchaseHold {
     public function setFunded(bool $funded): void
     {
         $this->funded = $funded;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpired(): bool
+    {
+        return $this->expired;
+    }
+
+    /**
+     * @param bool $expired
+     */
+    public function setExpired(bool $expired): void
+    {
+        $this->expired = $expired;
     }
 }

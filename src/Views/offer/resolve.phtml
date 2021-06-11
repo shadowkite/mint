@@ -1,29 +1,49 @@
+<h1>View NFT sale</h1>
 <div class="row">
-    <div class="col-2">
-        <img src="https://cryptor.at/128/<?php echo $this->sale->getOfferNft(); ?>.png" />
-    </div>
-    <div class="col-8">
-        <form method="post">
-            <label class="form-label">Price</label>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" value="<?php echo $this->sale->getCostAmount(); ?>" disabled>
-                <span class="input-group-text"><?php echo $this->sale->getCostTokenTicker(); ?></span>
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-2">
+                    <img class="img-fluid" src="<?php echo $this->nft->getImageUrl(); ?>" />
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo $this->nft->getTokenName(); ?> [<?php echo $this->nft->getTokenTicker() ?>]</h5>
+                        <form method="post">
+                            <input type="hidden" name="sale" value="<?php echo $this->nft->getSale()->getId(); ?>" />
+                            <label class="form-label">Price</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="<?php echo $this->nft->getSale()->getCostAmount(); ?>" disabled>
+                                <span class="input-group-text" id="basic-addon2"><?php echo $this->nft->getSale()->getCostTokenTicker(); ?></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" value="<?php echo $this->buyerSlp->getAddr(true); ?>">
+                            </div>
+                            <div class="progress">
+                                <div id="timer" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $this->percentageLeft; ?>%"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-body">
+                        <img class="img-fluid" src="<?php echo $this->qr; ?>" />
+                        <div class="card-text text-center">SLP</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-body">
+                        <img class="img-fluid" src="<?php echo $this->qr_invoice; ?>" />
+                        <div class="card-text text-center">Invoice</div>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Address</label>
-                <input type="text" class="form-control" value="<?php echo $this->buyerSlp->getAddr(true); ?>">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Paid?</label>
-                <span class="input-group-text" id="basic-addon2"><?php echo $this->paid?'Yes ✅':'No ❌'; ?></span>
-            </div>
-        </form>
-    </div>
-    <div class="col-2">
-        <img src="<?php echo $this->qr; ?>" />
+        </div>
     </div>
 </div>
+
+
 <script type="text/javascript">
     var getJSON = function(url, callback) {
         var xhr = new XMLHttpRequest();
@@ -43,11 +63,15 @@
     recheck = function () {
         getJSON('/offer/resolveJson?hold=<?php echo $this->purchaseHold->getId(); ?>',
             function(err, data) {
+                document.getElementById('timer').style.width = data.percentageLeft + '%';
+                document.getElementById('timer').innerText = data.secondsLeft + ' seconds';
+                if(data.expired) {
+                    window.location = '/offer/list';
+                }
                 if(data.paid) {
-                    document.getElementById('basic-addon2').innerHTML = 'Yes!';
-                    setTimeout(function() { window.location = '/offer' }, 1000);
+                    window.location = '/offer';
                 } else {
-                    setTimeout(recheck, 1000);
+                    setTimeout(recheck, 2000);
                 }
 
                 if (err !== null) {
@@ -59,7 +83,7 @@
     }
 
     window.onload = function() {
-        setTimeout(recheck, 1000);
+        setTimeout(recheck, 2000);
     };
 
 
