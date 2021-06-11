@@ -194,7 +194,6 @@ class OfferController extends Controller {
                 $this->redirect('/offer/view?sale=' . $sale->getId());
             }
         } catch(\Exception $e) {
-            $this->em->rollback();
             $this->view->error = $e->getMessage();
         }
     }
