@@ -15,7 +15,7 @@ class Db {
         // the connection configuration
         $dbParams = array(
             'driver'   => 'pdo_sqlite',
-            'path'     => __DIR__ . '/../../mint.sqlite'
+            'path'     => __DIR__ . '/../../storage/mint.sqlite'
         );
         $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
         self::$em = \Doctrine\ORM\EntityManager::create($dbParams, $config);
