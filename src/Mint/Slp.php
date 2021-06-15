@@ -114,11 +114,12 @@ class Slp {
      * @throws \Exception
      */
     public function getBalance($type = 'sat') {
-        $result = $this->send('wallet/balance', ['walletId' => $this->getWalletId()]);
+        $node = new Node();
+        $sats = $node->getBalance($this->getAddr());
         switch($type) {
-            case 'sat': return $result->sat;
-            case 'usd': return $result->usd;
-            case 'bch': return $result->bch;
+            case 'sat': return $sats;
+            case 'usd': return ($sats / 100000000) * 500;
+            case 'bch': return $sats / 100000000;
         }
         return null;
     }
